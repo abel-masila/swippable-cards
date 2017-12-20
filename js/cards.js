@@ -15,21 +15,23 @@ class Cards {
     this.currentX=0;
     this.screenX=0;
     this.targetX=0;
+    this.remaining=this.cards.length;
+    this.updateCounter();
 
     this.addEventListeners();
 
     requestAnimationFrame(this.update);
   }
 
-addEventListeners(){
-  document.addEventListener('touchstart', this.onStart);
-  document.addEventListener('touchmove', this.onMove);
-  document.addEventListener('touchend', this.onEnd);
+  addEventListeners(){
+    document.addEventListener('touchstart', this.onStart);
+    document.addEventListener('touchmove', this.onMove);
+    document.addEventListener('touchend', this.onEnd);
 
-  document.addEventListener('mousedown', this.onStart);
-  document.addEventListener('mousemove', this.onMove);
-  document.addEventListener('mouseup', this.onEnd);
-}
+    document.addEventListener('mousedown', this.onStart);
+    document.addEventListener('mousemove', this.onMove);
+    document.addEventListener('mouseup', this.onEnd);
+  }
   onStart(evt){
     if(this.target)
       return;
@@ -46,27 +48,24 @@ addEventListeners(){
 
     evt.preventDefault();
   }
-
   onMove(evt){
     if(!this.target)
       return;
 
     this.currentX=evt.pageX || evt.touches[0].pageX;
   }
-
   onEnd(evt){
     if(!this.target)
       return;
-
-
     this.targetX=0;
     let screenX=this.currentX-this.startX;
-    if(Math.abs(screenX) > this.targetBCR.width * 0.35 ){
+    if(Math.abs(screenX) > this.targetBCR.width * 0.75 ){
+      this.updateCounter();
+
       this.targetX=(screenX > 0 ) ? this.targetBCR.width: -this.targetBCR.width;
     }
     this.draggingCard=false;
   }
-
   update(){
     requestAnimationFrame(this.update);
     if(!this.target)
@@ -123,6 +122,12 @@ addEventListeners(){
         this.target.style.transform='none';
         this.target=null;
       }
+    }
+  }
+  updateCounter(){
+    if(this.remaining > -1){
+      this.remaining--;
+      document.querySelector('.card-counter > div > span').innerText = this.remaining+1;
     }
   }
 }
